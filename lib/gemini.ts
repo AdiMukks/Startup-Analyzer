@@ -6,7 +6,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { AnalysisResult } from "@/types/analysis";
 
-const MODEL_NAME = "gemini-2.0-flash";
+const MODEL_NAME = "gemini-2.5-flash";
 
 /**
  * Builds the prompt we send to Gemini. We are very explicit about the
