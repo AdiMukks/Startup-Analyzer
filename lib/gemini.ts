@@ -102,29 +102,41 @@ export async function analyzeWebsiteText(
 
   if (!apiKey) {
     throw new Error(
-      "Server is missing GEMINI_API_KEY. Please add it to your .env.local file."
+      "Server is missing GEMINI_API_KEY. Please add it to your environment variables."
     );
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+  const model = genAI.getGenerativeModel({
+    model: MODEL_NAME,
+  });
 
   let rawText: string;
+
   try {
     const result = await model.generateContent(buildPrompt(websiteText));
+
     rawText = result.response.text();
+
+    console.log("Gemini raw response:", rawText);
   } catch (error) {
     console.error("Gemini API request failed:", error);
-    throw new Error(
-      "The AI service failed to respond. Please try again in a moment."
-    );
+
+    // Expose the real error to Vercel logs
+    throw error;
   }
 
   let parsed: unknown;
+
   try {
     parsed = JSON.parse(cleanJsonResponse(rawText));
   } catch (error) {
-    console.error("Failed to parse Gemini response as JSON:", rawText, error);
+    console.error(
+      "Failed to parse Gemini response as JSON:",
+      rawText,
+      error
+    );
+
     throw new Error(
       "The AI returned an unexpected response. Please try again."
     );
